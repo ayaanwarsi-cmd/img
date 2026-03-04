@@ -1,37 +1,69 @@
 body{
-background:#0f172a;
-color:white;
-font-family:Arial;
-text-align:center;
+background:#0b0b0c;
+color:#e5e5e5;
+font-family:system-ui,-apple-system,BlinkMacSystemFont;
+margin:0;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:40px 20px;
 }
 
 h1{
-margin-top:20px;
+font-size:28px;
+font-weight:600;
+margin-bottom:25px;
 }
 
-#upload{
-margin:20px;
+.upload-area{
+border:1px dashed #333;
+border-radius:10px;
+padding:30px;
+text-align:center;
+margin-bottom:30px;
+background:#111;
+}
+
+button{
+background:#1f6feb;
+border:none;
+padding:10px 18px;
+border-radius:8px;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+opacity:0.9;
 }
 
 #gallery{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-gap:15px;
-padding:20px;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:20px;
 }
 
 .card{
-background:#1e293b;
-padding:10px;
+background:#111;
+border:1px solid #222;
 border-radius:10px;
+overflow:hidden;
 }
 
-img{
+.card img{
 width:100%;
-border-radius:8px;
+display:block;
 }
 
-input{
-width:100%;
-margin-top:5px;
+.card-actions{
+display:flex;
+gap:8px;
+padding:10px;
+}
+
+.card-actions button{
+flex:1;
+font-size:12px;
 }
