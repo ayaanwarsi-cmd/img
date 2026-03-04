@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 <meta charset="UTF-8">
 <title>Image Host</title>
@@ -18,7 +17,7 @@
 <div id="dropzone">
 <button id="uploadBtn">Upload Images</button>
 <input type="file" id="upload" multiple hidden>
-<p>Drag & Drop images here or click upload</p>
+<p>Drag & Drop images here</p>
 </div>
 
 <div id="progress"></div>
@@ -27,9 +26,11 @@
 
 </div>
 
-<div id="modal" class="modal">
-<img id="modalImg">
+<div id="lightbox">
+<img id="lightboxImg">
 </div>
+
+<div id="toast">Copied!</div>
 
 <script src="script.js"></script>
 
