@@ -26,11 +26,13 @@ async function handleFiles(files){
 
 for(let file of files){
 
-progress.innerText="Uploading "+file.name
-
 let reader=new FileReader()
 
+progress.innerText="Uploading "+file.name
+
 reader.onload=async function(){
+
+try{
 
 let base64=reader.result.split(",")[1]
 
@@ -45,9 +47,20 @@ data:base64
 })
 })
 
+if(!res.ok){
+throw new Error("Upload failed")
+}
+
 let data=await res.json()
 
 addImage(data.url)
+
+}catch(err){
+
+console.error(err)
+alert("Upload failed")
+
+}
 
 }
 
@@ -83,7 +96,7 @@ gallery.prepend(div)
 function copyLink(url){
 
 navigator.clipboard.writeText(url)
-alert("Copied!")
+alert("Copied")
 
 }
 
@@ -134,10 +147,17 @@ loadImages()
 
 async function loadImages(){
 
+try{
+
 let api=`https://api.github.com/repos/${username}/${repo}/contents/${folder}`
 
 let res=await fetch(api)
+
+if(!res.ok) return
+
 let data=await res.json()
+
+if(!Array.isArray(data)) return
 
 gallery.innerHTML=""
 
@@ -148,5 +168,11 @@ let url=`https://raw.githubusercontent.com/${username}/${repo}/main/${folder}/${
 addImage(url)
 
 })
+
+}catch(err){
+
+console.error("Gallery load failed",err)
+
+}
 
 }
