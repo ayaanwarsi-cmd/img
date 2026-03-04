@@ -5,9 +5,10 @@ return res.status(405).json({error:"Method not allowed"})
 }
 
 const token = process.env.GITHUB_TOKEN
-const username = "ayaanwarsi-cmd"
-const repo = "img"
-const folder = "images"
+
+const username="ayaanwarsi-cmd"
+const repo="img"
+const folder="images"
 
 const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body
 
@@ -36,7 +37,7 @@ if(!response.ok){
 const err = await response.text()
 
 return res.status(500).json({
-error:"GitHub upload failed",
+error:"Upload failed",
 details:err
 })
 
