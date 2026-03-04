@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>My Image Gallery</title>
+
+<style>
+body{
+font-family:Arial;
+background:#111;
+color:white;
+text-align:center;
+}
+
+h1{
+margin:20px;
+}
+
+#controls{
+margin:20px;
+}
+
+#gallery{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+gap:15px;
+padding:20px;
+}
+
+.image-card{
+background:#222;
+padding:10px;
+border-radius:10px;
+}
+
+.image-card img{
+width:100%;
+border-radius:8px;
+}
+
+button{
+margin-top:5px;
+padding:5px 10px;
+cursor:pointer;
+}
+
+input[type=file]{
+margin:20px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>My Image Gallery</h1>
+
+<div id="controls">
+
+<select id="sort">
+<option value="latest">Latest</option>
+<option value="oldest">Oldest</option>
+</select>
+
+<input type="file" id="upload">
+
+</div>
+
+<div id="gallery"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
