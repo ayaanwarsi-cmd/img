@@ -1,41 +1,54 @@
-export default async function handler(req,res){
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
-if(req.method !== "POST"){
-return res.status(405).json({error:"Method not allowed"})
-}
+import { Buffer } from "buffer";
 
-const token=process.env.GITHUB_TOKEN
-const username="ayaanwarsi-cmd"
-const repo="img"
-const folder="images"
+export default async function handler(req, res) {
 
-let buffers=[]
-for await (const chunk of req){
-buffers.push(chunk)
-}
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-let fileBuffer=Buffer.concat(buffers)
+  const token = process.env.GITHUB_TOKEN;
+  const username = "ayaanwarsi-cmd";
+  const repo = "img";
+  const folder = "images";
 
-let fileName=Date.now()+".png"
+  const chunks = [];
 
-let content=fileBuffer.toString("base64")
+  for await (const chunk of req) {
+    chunks.push(chunk);
+  }
 
-let url=`https://api.github.com/repos/${username}/${repo}/contents/${folder}/${fileName}`
+  const buffer = Buffer.concat(chunks);
+  const base64 = buffer.toString("base64");
 
-await fetch(url,{
-method:"PUT",
-headers:{
-Authorization:`token ${token}`,
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-message:"upload image",
-content:content
-})
-})
+  const filename = Date.now() + ".png";
 
-let imageUrl=`https://raw.githubusercontent.com/${username}/${repo}/main/${folder}/${fileName}`
+  const githubURL =
+    `https://api.github.com/repos/${username}/${repo}/contents/${folder}/${filename}`;
 
-res.status(200).json({url:imageUrl})
+  const upload = await fetch(githubURL, {
+    method: "PUT",
+    headers: {
+      Authorization: `token ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      message: "upload image",
+      content: base64,
+    }),
+  });
 
+  if (!upload.ok) {
+    return res.status(500).json({ error: "Upload failed" });
+  }
+
+  const imageURL =
+    `https://raw.githubusercontent.com/${username}/${repo}/main/${folder}/${filename}`;
+
+  res.status(200).json({ url: imageURL });
 }
