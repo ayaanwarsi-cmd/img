@@ -26,14 +26,23 @@ async function handleFiles(files){
 
 for(let file of files){
 
-let formData=new FormData()
-formData.append("file",file)
-
 progress.innerText="Uploading "+file.name
+
+let reader=new FileReader()
+
+reader.onload=async function(){
+
+let base64=reader.result.split(",")[1]
 
 let res=await fetch("/api/upload",{
 method:"POST",
-body:formData
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+name:file.name,
+data:base64
+})
 })
 
 let data=await res.json()
@@ -42,7 +51,12 @@ addImage(data.url)
 
 }
 
+reader.readAsDataURL(file)
+
+}
+
 progress.innerText="Upload complete"
+
 }
 
 function addImage(url){
@@ -51,10 +65,9 @@ let div=document.createElement("div")
 div.className="card"
 
 div.innerHTML=`
-<img src="${url}">
+<img src="${url}" loading="lazy">
 <div class="actions">
 <button onclick="copyLink('${url}')">Copy</button>
-<button onclick="renameImage('${url}')">Rename</button>
 <button onclick="deleteImage('${url}')">Delete</button>
 </div>
 `
@@ -85,16 +98,6 @@ body:JSON.stringify({url})
 })
 
 location.reload()
-
-}
-
-function renameImage(url){
-
-let newName=prompt("New filename")
-
-if(!newName) return
-
-alert("Rename API can be added next.")
 
 }
 
@@ -136,8 +139,14 @@ let api=`https://api.github.com/repos/${username}/${repo}/contents/${folder}`
 let res=await fetch(api)
 let data=await res.json()
 
+gallery.innerHTML=""
+
 data.reverse().forEach(file=>{
-addImage(file.download_url)
+
+let url=`https://raw.githubusercontent.com/${username}/${repo}/main/${folder}/${file.name}`
+
+addImage(url)
+
 })
 
 }
