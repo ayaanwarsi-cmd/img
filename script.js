@@ -34,31 +34,24 @@ async function handleFiles(files){
 
 for(let file of files){
 
-progress.innerText="Uploading "+file.name
+progress.innerText = "Uploading " + file.name
 
-let reader=new FileReader()
-
-reader.onload=async function(){
+let formData = new FormData()
+formData.append("file", file)
 
 try{
 
-let base64=reader.result.split(",")[1]
-
-let res=await fetch("/api/upload",{
+let res = await fetch("/api/upload",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-name:file.name,
-data:base64
-})
+body:formData
 })
 
-let data=await res.json()
+let data = await res.json()
 
 if(data.url){
 addImage(data.url)
+}else{
+alert("Upload failed")
 }
 
 }catch(err){
@@ -68,11 +61,7 @@ alert("Upload failed")
 
 }
 
-reader.readAsDataURL(file)
-
-}
-
-progress.innerText="Upload complete"
+progress.innerText = "Upload complete"
 
 }
 
