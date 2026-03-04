@@ -147,3 +147,25 @@ margin-bottom:20px;
 from{opacity:0;transform:translateY(10px)}
 to{opacity:1;transform:none}
 }
+/* Drag reorder visuals */
+.card.dragging{
+  opacity:0.4;
+  transform:scale(0.98);
+}
+
+.card{
+  cursor:grab;
+}
+
+.card:active{
+  cursor:grabbing;
+}
+
+/* Rename button color */
+.rename-btn{
+  background:#9333ea;
+}
+
+.rename-btn:hover{
+  background:#a855f7;
+}
