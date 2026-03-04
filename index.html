@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8">
-<title>My Image Host</title>
+<title>Image Host</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -13,18 +13,25 @@
 
 <h1>Image Host</h1>
 
-<div class="upload-area" id="dropzone">
-<input type="file" id="upload" hidden>
-<button id="uploadBtn">Upload Image</button>
-<p>or drag & drop images here</p>
+<input id="search" placeholder="Search images...">
+
+<div id="dropzone">
+<button id="uploadBtn">Upload Images</button>
+<input type="file" id="upload" multiple hidden>
+<p>Drag & Drop images here</p>
 </div>
+
+<div id="progress"></div>
 
 <div id="gallery"></div>
 
 </div>
 
+<div id="modal" class="modal">
+<img id="modalImg">
+</div>
+
 <script src="script.js"></script>
 
 </body>
-
 </html>
