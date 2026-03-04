@@ -1,26 +1,46 @@
+export const config = {
+api: {
+bodyParser: false
+}
+}
+
 export default async function handler(req,res){
+
+const token = process.env.GITHUB_TOKEN
+const username = "ayaanwarsi-cmd"
+const repo = "img"
+const folder = "images"
 
 if(req.method !== "POST"){
 return res.status(405).json({error:"Method not allowed"})
 }
 
-const token = process.env.GITHUB_TOKEN
+try{
 
-const username="ayaanwarsi-cmd"
-const repo="img"
-const folder="images"
+const chunks=[]
+for await (const chunk of req){
+chunks.push(chunk)
+}
 
-const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body
+const buffer = Buffer.concat(chunks)
 
-const name = body.name
-const data = body.data
+const boundary = req.headers["content-type"].split("boundary=")[1]
 
-const filename = Date.now()+"-"+name
+const parts = buffer.toString().split(boundary)
 
-const githubURL =
-`https://api.github.com/repos/${username}/${repo}/contents/${folder}/${filename}`
+const filePart = parts.find(p=>p.includes("filename="))
 
-const response = await fetch(githubURL,{
+const fileName = filePart.match(/filename="(.+?)"/)[1]
+
+const fileData = filePart.split("\r\n\r\n")[1].split("\r\n")[0]
+
+const base64 = Buffer.from(fileData,"binary").toString("base64")
+
+const filename = Date.now()+"-"+fileName
+
+const githubURL = `https://api.github.com/repos/${username}/${repo}/contents/${folder}/${filename}`
+
+await fetch(githubURL,{
 method:"PUT",
 headers:{
 Authorization:`token ${token}`,
@@ -28,24 +48,19 @@ Authorization:`token ${token}`,
 },
 body:JSON.stringify({
 message:"upload image",
-content:data
+content:base64
 })
 })
 
-if(!response.ok){
-
-const err = await response.text()
-
-return res.status(500).json({
-error:"Upload failed",
-details:err
-})
-
-}
-
-const imageURL =
-`https://raw.githubusercontent.com/${username}/${repo}/main/${folder}/${filename}`
+const imageURL=`https://raw.githubusercontent.com/${username}/${repo}/main/${folder}/${filename}`
 
 res.json({url:imageURL})
+
+}catch(err){
+
+console.error(err)
+res.status(500).json({error:"Upload failed"})
+
+}
 
 }
