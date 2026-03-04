@@ -38,3 +38,43 @@ gallery.appendChild(div)
 }
 
 loadImages()
+
+document.getElementById("upload").addEventListener("change",async function(){
+
+let file=this.files[0]
+
+let reader=new FileReader()
+
+reader.onload=async function(){
+
+let content=reader.result.split(",")[1]
+
+let url=`https://api.github.com/repos/${username}/${repo}/contents/${folder}/${file.name}`
+
+await fetch(url,{
+method:"PUT",
+headers:{
+Authorization:`token ${token}`
+},
+body:JSON.stringify({
+message:"upload image",
+content:content
+})
+})
+
+loadImages()
+
+}
+
+reader.readAsDataURL(file)
+
+})
+async function renameImage(path){
+
+let newName=prompt("New name")
+
+if(!newName)return
+
+alert("Rename in GitHub requires delete + upload again. Implement later.")
+
+}
