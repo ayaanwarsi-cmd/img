@@ -5,9 +5,17 @@ const dropzone=document.getElementById("dropzone")
 const progress=document.getElementById("progress")
 const search=document.getElementById("search")
 
+const lightbox=document.getElementById("lightbox")
+const lightboxImg=document.getElementById("lightboxImg")
+const toast=document.getElementById("toast")
+
 const username="ayaanwarsi-cmd"
 const repo="img"
 const folder="images"
+
+let images=[]
+let page=0
+const perPage=10
 
 uploadBtn.onclick=()=>upload.click()
 
@@ -26,13 +34,11 @@ async function handleFiles(files){
 
 for(let file of files){
 
-let reader=new FileReader()
-
 progress.innerText="Uploading "+file.name
 
-reader.onload=async function(){
+let reader=new FileReader()
 
-try{
+reader.onload=async function(){
 
 let base64=reader.result.split(",")[1]
 
@@ -47,20 +53,9 @@ data:base64
 })
 })
 
-if(!res.ok){
-throw new Error("Upload failed")
-}
-
 let data=await res.json()
 
 addImage(data.url)
-
-}catch(err){
-
-console.error(err)
-alert("Upload failed")
-
-}
 
 }
 
@@ -78,7 +73,7 @@ let div=document.createElement("div")
 div.className="card"
 
 div.innerHTML=`
-<img src="${url}" loading="lazy">
+<img src="${url}">
 <div class="actions">
 <button onclick="copyLink('${url}')">Copy</button>
 <button onclick="deleteImage('${url}')">Delete</button>
@@ -86,7 +81,8 @@ div.innerHTML=`
 `
 
 div.querySelector("img").onclick=()=>{
-openModal(url)
+lightboxImg.src=url
+lightbox.style.display="flex"
 }
 
 gallery.prepend(div)
@@ -96,7 +92,12 @@ gallery.prepend(div)
 function copyLink(url){
 
 navigator.clipboard.writeText(url)
-alert("Copied")
+
+toast.style.opacity=1
+
+setTimeout(()=>{
+toast.style.opacity=0
+},1500)
 
 }
 
@@ -114,18 +115,8 @@ location.reload()
 
 }
 
-function openModal(url){
-
-const modal=document.getElementById("modal")
-const img=document.getElementById("modalImg")
-
-img.src=url
-modal.style.display="flex"
-
-modal.onclick=()=>{
-modal.style.display="none"
-}
-
+lightbox.onclick=()=>{
+lightbox.style.display="none"
 }
 
 search.addEventListener("input",()=>{
@@ -147,21 +138,33 @@ loadImages()
 
 async function loadImages(){
 
-try{
+for(let i=0;i<6;i++){
+let sk=document.createElement("div")
+sk.className="skeleton"
+gallery.appendChild(sk)
+}
 
 let api=`https://api.github.com/repos/${username}/${repo}/contents/${folder}`
 
 let res=await fetch(api)
-
-if(!res.ok) return
-
 let data=await res.json()
-
-if(!Array.isArray(data)) return
 
 gallery.innerHTML=""
 
-data.reverse().forEach(file=>{
+images=data.reverse()
+
+renderNext()
+
+}
+
+function renderNext(){
+
+let start=page*perPage
+let end=start+perPage
+
+let slice=images.slice(start,end)
+
+slice.forEach(file=>{
 
 let url=`https://raw.githubusercontent.com/${username}/${repo}/main/${folder}/${file.name}`
 
@@ -169,10 +172,16 @@ addImage(url)
 
 })
 
-}catch(err){
-
-console.error("Gallery load failed",err)
+page++
 
 }
 
+window.addEventListener("scroll",()=>{
+
+if(window.innerHeight+window.scrollY>=document.body.offsetHeight-200){
+
+renderNext()
+
 }
+
+})
