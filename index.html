@@ -9,11 +9,19 @@
 
 <body>
 
-<h1>My Image Host</h1>
+<div class="container">
 
-<input type="file" id="upload">
+<h1>Image Host</h1>
+
+<div class="upload-area" id="dropzone">
+<input type="file" id="upload" hidden>
+<button id="uploadBtn">Upload Image</button>
+<p>or drag & drop images here</p>
+</div>
 
 <div id="gallery"></div>
+
+</div>
 
 <script src="script.js"></script>
 
